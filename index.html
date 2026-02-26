@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Radha Naam Jaap — Track your daily chanting, build spiritual streaks, earn divine rewards, and rise on global leaderboards." />
+    <title>Radha Naam Jaap — Sync Your Divine Progress</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter (body) + Playfair Display (headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet" />
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config Override -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            50: '#FFFDF5',
+                            100: '#FFF9E0',
+                            200: '#FFEEB3',
+                            300: '#FFE380',
+                            400: '#FFD34D',
+                            500: '#F5A623',
+                            600: '#D4891A',
+                            700: '#B36B11',
+                            800: '#8C4F0A',
+                            900: '#6B3A06',
+                        },
+                        surface: {
+                            DEFAULT: '#0B0B0F',
+                            50: '#16161D',
+                            100: '#1C1C25',
+                            200: '#22222D',
+                            300: '#2A2A36',
+                        },
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delay': 'float 6s ease-in-out 3s infinite',
+                        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+                        'shimmer': 'shimmer 3s ease-in-out infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(245, 166, 35, 0.15)' },
+                            '50%': { boxShadow: '0 0 40px rgba(245, 166, 35, 0.35)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% center' },
+                            '100%': { backgroundPosition: '200% center' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        /* === BASE === */
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #0B0B0F;
+            color: #E8E8EC;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: rgba(245, 166, 35, 0.35);
+            color: #fff;
+        }
+
+        /* === UTILITIES === */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(245, 166, 35, 0.5), 0 0 60px rgba(245, 166, 35, 0.2);
+        }
+
+        .icon-glow {
+            filter: drop-shadow(0 0 8px rgba(245, 166, 35, 0.5));
+        }
+
+        .glass {
+            background: rgba(22, 22, 29, 0.55);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(245, 166, 35, 0.1);
+        }
+
+        /* === AMBIENT ORBS === */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(100px);
+        }
+
+        .orb-1 {
+            width: 55vw;
+            height: 55vw;
+            max-width: 700px;
+            max-height: 700px;
+            top: -15%;
+            right: -12%;
+            background: radial-gradient(circle, rgba(245, 166, 35, 0.12) 0%, transparent 70%);
+        }
+
+        .orb-2 {
+            width: 50vw;
+            height: 50vw;
+            max-width: 600px;
+            max-height: 600px;
+            bottom: 10%;
+            left: -10%;
+            background: radial-gradient(circle, rgba(245, 166, 35, 0.07) 0%, transparent 70%);
+        }
+
+        .orb-3 {
+            width: 30vw;
+            height: 30vw;
+            max-width: 400px;
+            max-height: 400px;
+            top: 55%;
+            right: -5%;
+            background: radial-gradient(circle, rgba(212, 137, 26, 0.06) 0%, transparent 60%);
+        }
+
+        /* === FEATURE CARDS === */
+        .feature-card {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.4s ease,
+                border-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(245, 166, 35, 0.12);
+            border-color: rgba(245, 166, 35, 0.35);
+        }
+
+        .feature-card:hover .feature-icon-wrap {
+            transform: scale(1.08);
+            background: rgba(245, 166, 35, 0.18);
+            box-shadow: 0 0 25px rgba(245, 166, 35, 0.3);
+        }
+
+        /* === PROGRESS BAR ANIMATION === */
+        .progress-fill {
+            animation: progressGrow 2s ease-out forwards;
+        }
+
+        @keyframes progressGrow {
+            from {
+                width: 0%;
+            }
+
+            to {
+                width: 60%;
+            }
+        }
+
+        /* === SCROLL REVEAL (simple CSS-only) === */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === MOBILE NAV === */
+        .mobile-nav {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .mobile-nav.open {
+            max-height: 300px;
+        }
+
+        /* Reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="relative overflow-x-hidden min-h-screen antialiased font-sans">
+
+    <!-- Ambient Orbs -->
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+    <div class="orb orb-3" aria-hidden="true"></div>
+
+    <!-- ═══════════════════════════════════════════
+       HEADER / NAVIGATION
+  ═══════════════════════════════════════════ -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 glass transition-all duration-300"
+        style="border-bottom: 1px solid rgba(245,166,35,0.08);">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8">
+            <div class="flex items-center justify-between h-[72px]">
+
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group cursor-pointer" aria-label="Radha Naam Jaap Home">
+                    <div
+                        class="relative w-10 h-10 rounded-xl overflow-hidden ring-1 ring-gold-500/20 group-hover:ring-gold-500/50 transition-all duration-300 animate-glow-pulse">
+                        <img src="assets/icon/aap_icon.webp" alt="Radha Naam Jaap Icon"
+                            class="w-full h-full object-cover" />
+                    </div>
+                    <span
+                        class="font-serif text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold-300 via-gold-400 to-gold-600 tracking-wide">
+                        Radha Naam Jaap
+                    </span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-10" aria-label="Main Navigation">
+                    <a href="#features"
+                        class="text-sm font-medium text-gray-400 hover:text-gold-400 transition-colors duration-200 cursor-pointer">Features</a>
+                    <a href="#store"
+                        class="text-sm font-medium text-gray-400 hover:text-gold-400 transition-colors duration-200 cursor-pointer">Store</a>
+                    <a href="#leaderboard"
+                        class="text-sm font-medium text-gray-400 hover:text-gold-400 transition-colors duration-200 cursor-pointer">Leaderboard</a>
+                </nav>
+
+                <!-- CTA -->
+                <a href="https://play.google.com/store/apps/details?id=com.epiclabcreation.radhanaamjaap"
+                    target="_blank" rel="noopener noreferrer"
+                    class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-gradient-to-r from-gold-500 to-gold-600 text-surface hover:from-gold-400 hover:to-gold-500 transition-all duration-300 shadow-[0_0_20px_rgba(245,166,35,0.25)] hover:shadow-[0_0_35px_rgba(245,166,35,0.45)] transform hover:-translate-y-0.5 cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    Download
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button id="mobileMenuBtn"
+                    class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg text-gray-400 hover:text-gold-400 hover:bg-surface-100 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40"
+                    aria-label="Toggle menu" aria-expanded="false">
+                    <i data-lucide="menu" class="w-6 h-6" id="menuIcon"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Nav Dropdown -->
+            <nav id="mobileNav" class="mobile-nav md:hidden" aria-label="Mobile Navigation">
+                <div class="flex flex-col gap-1 pb-5">
+                    <a href="#features"
+                        class="px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:text-gold-400 hover:bg-surface-100 transition-all cursor-pointer">Features</a>
+                    <a href="#store"
+                        class="px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:text-gold-400 hover:bg-surface-100 transition-all cursor-pointer">Store</a>
+                    <a href="#leaderboard"
+                        class="px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:text-gold-400 hover:bg-surface-100 transition-all cursor-pointer">Leaderboard</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.epiclabcreation.radhanaamjaap"
+                        target="_blank" rel="noopener noreferrer"
+                        class="mx-4 mt-2 px-5 py-2.5 rounded-full text-sm font-bold text-center bg-gradient-to-r from-gold-500 to-gold-600 text-surface cursor-pointer">
+                        Download App
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+    <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════ -->
+    <section class="relative pt-32 pb-20 md:pt-44 md:pb-32 lg:pt-52 lg:pb-40">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-14 lg:gap-20">
+
+                <!-- Left: Copy -->
+                <div class="flex-1 text-center lg:text-left max-w-2xl">
+                    <!-- Badge -->
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-gold-400 text-xs font-bold uppercase tracking-[0.15em] mb-8 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 icon-glow"></i>
+                        Your Digital Spiritual Companion
+                    </div>
+
+                    <h1
+                        class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold leading-[1.08] tracking-tight mb-7">
+                        Sync Your
+                        <span
+                            class="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-700 text-glow">
+                            Divine Progress
+                        </span>
+                    </h1>
+
+                    <p
+                        class="text-base sm:text-lg text-gray-400 leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0 font-light">
+                        Track your daily chanting (Jaap), build unwavering spiritual streaks, earn sacred rewards, and
+                        connect with
+                        a global community of devotees on the path of devotion.
+                    </p>
+
+                    <!-- Download Badges -->
+                    <div id="download"
+                        class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                        <!-- Google Play -->
+                        <a href="https://play.google.com/store/apps/details?id=com.epiclabcreation.radhanaamjaap"
+                            target="_blank" rel="noopener noreferrer"
+                            class="group flex items-center gap-3.5 px-6 py-3.5 bg-surface-100 border border-gray-700/60 hover:border-gold-500/40 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(245,166,35,0.12)] w-full sm:w-auto justify-center cursor-pointer">
+                            <svg class="w-7 h-7 flex-shrink-0" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M3.60938 1.81445L13.793 12.0003L3.60938 22.1855C3.22266 21.8574 2.98438 21.3672 2.98438 20.8184V3.18164C2.98438 2.63281 3.22266 2.14258 3.60938 1.81445Z"
+                                    fill="#4285F4" />
+                                <path
+                                    d="M17.5039 8.28906L13.793 12.0002L17.5039 15.7109L21.8438 13.2773C22.6328 12.834 22.6328 11.166 21.8438 10.7227L17.5039 8.28906Z"
+                                    fill="#FBBC04" />
+                                <path
+                                    d="M3.60938 22.1856C3.80469 22.3614 4.04688 22.4684 4.30469 22.4887C4.58984 22.5114 4.88672 22.4277 5.16016 22.2715L17.5039 15.7109L13.793 12.0002L3.60938 22.1856Z"
+                                    fill="#EA4335" />
+                                <path
+                                    d="M13.793 12.0001L17.5039 8.28906L5.16016 1.72852C4.88672 1.57227 4.58984 1.48828 4.30469 1.51172C4.04688 1.53125 3.80469 1.63867 3.60938 1.81445L13.793 12.0001Z"
+                                    fill="#34A853" />
+                            </svg>
+                            <div class="text-left leading-none">
+                                <span
+                                    class="text-[10px] font-bold uppercase text-gray-500 group-hover:text-gray-400 transition-colors tracking-wider block mb-1">GET
+                                    IT ON</span>
+                                <span class="text-lg font-bold text-white tracking-tight">Google Play</span>
+                            </div>
+                        </a>
+
+                        <!-- App Store -->
+                        <div
+                            class="group flex items-center gap-3.5 px-6 py-3.5 bg-white/80 rounded-2xl w-full sm:w-auto justify-center cursor-not-allowed opacity-70">
+                            <svg class="w-7 h-7 flex-shrink-0" viewBox="0 0 24 24" fill="black">
+                                <path
+                                    d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 16.56 2.93 11.3 4.7 7.72C5.57 5.94 7.36 4.86 9.28 4.84C10.56 4.81 11.78 5.7 12.58 5.7C13.38 5.7 14.85 4.63 16.41 4.8C17.07 4.83 18.91 5.06 20.1 6.79C19.99 6.86 17.65 8.21 17.68 11.07C17.72 14.46 20.6 15.58 20.64 15.6C20.61 15.69 20.15 17.27 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.09 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" />
+                            </svg>
+                            <div class="text-left leading-none">
+                                <span
+                                    class="text-[10px] font-bold uppercase text-gray-500 tracking-wider block mb-1">Coming
+                                    Soon on</span>
+                                <span class="text-lg font-bold text-black tracking-tight">App Store</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social proof -->
+                    <div class="mt-10 flex items-center gap-4 justify-center lg:justify-start">
+                        <div class="flex items-center gap-0.5">
+                            <svg class="w-4 h-4 text-gold-400 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-gold-400 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-gold-400 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-gold-400 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                            <svg class="w-4 h-4 text-gold-400 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm text-gray-500 font-medium">Loved by <span
+                                class="text-gold-400 font-semibold">10,000+</span> devotees</span>
+                    </div>
+                </div>
+
+                <!-- Right: App Screenshot Mockup -->
+                <div class="flex-shrink-0 relative">
+                    <div class="relative w-[260px] sm:w-[280px] md:w-[300px]">
+                        <!-- Phone frame -->
+                        <div
+                            class="relative rounded-[2.5rem] overflow-hidden border-[3px] border-surface-300 shadow-[0_0_60px_rgba(245,166,35,0.15),0_25px_60px_rgba(0,0,0,0.5)]">
+                            <!-- Notch -->
+                            <div
+                                class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-surface rounded-b-2xl z-20">
+                            </div>
+                            <img src="assets/images/onboarding_1.webp" alt="Radha Naam Jaap App Screenshot"
+                                class="w-full aspect-[9/19.5] object-cover" />
+                        </div>
+                        <!-- Glow behind phone -->
+                        <div class="absolute -inset-10 bg-gradient-to-b from-gold-500/10 via-gold-500/5 to-transparent rounded-full -z-10 blur-3xl animate-glow-pulse"
+                            aria-hidden="true"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+       FEATURES SECTION
+  ═══════════════════════════════════════════ -->
+    <section id="features" class="relative py-24 md:py-32 border-t border-gold-500/10">
+        <!-- Faint top-edge glow -->
+        <div
+            class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+
+            <!-- Section Header -->
+            <div class="text-center mb-16 md:mb-20 reveal">
+                <p class="text-gold-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">Powerful Features</p>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-5">
+                    Journey of <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600 text-glow">Devotion</span>
+                </h2>
+                <div class="w-20 h-[2px] bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mb-5">
+                </div>
+                <p class="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed">
+                    Embrace a transformative spiritual practice with features crafted to deepen your daily chanting
+                    experience.
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+                <!-- Card 1 — Track Your Jaap -->
+                <div class="feature-card glass rounded-3xl p-7 sm:p-9 relative overflow-hidden group reveal">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/[0.03] rounded-bl-full transition-transform duration-700 group-hover:scale-125"
+                        aria-hidden="true"></div>
+
+                    <div
+                        class="feature-icon-wrap w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-7 border border-gold-500/15 transition-all duration-300">
+                        <img src="assets/images/mala_icon.webp" alt="" class="w-9 h-9 icon-glow" aria-hidden="true" />
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-serif font-bold text-white mb-3">Track Your Jaap</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm sm:text-base mb-7">
+                        Beautiful visual mala counters with haptic feedback and streak tracking. Never lose count of
+                        your sacred recitations.
+                    </p>
+
+                    <!-- Mini UI Preview -->
+                    <div class="bg-surface/70 p-4 rounded-2xl border border-surface-300">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Today's
+                                Progress</span>
+                            <span class="text-sm font-bold text-gold-400 text-glow">65 / 108</span>
+                        </div>
+                        <div class="h-2.5 bg-surface-200 rounded-full overflow-hidden">
+                            <div
+                                class="progress-fill h-full bg-gradient-to-r from-gold-600 to-gold-400 rounded-full relative">
+                                <div
+                                    class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-gold-400 rounded-full border-2 border-surface shadow-[0_0_12px_rgba(245,166,35,0.6)]">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <img src="assets/images/active_streak.webp" alt="" class="w-5 h-5" aria-hidden="true" />
+                            <span class="text-xs font-semibold text-gold-400">7-day streak</span>
+                            <span class="text-xs text-gray-500 ml-auto">🔥 Longest: 21 days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 — My Sankalpa -->
+                <div class="feature-card glass rounded-3xl p-7 sm:p-9 relative overflow-hidden group reveal">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/[0.03] rounded-bl-full transition-transform duration-700 group-hover:scale-125"
+                        aria-hidden="true"></div>
+
+                    <div
+                        class="feature-icon-wrap w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-7 border border-gold-500/15 transition-all duration-300">
+                        <i data-lucide="target" class="w-8 h-8 text-gold-400 icon-glow"></i>
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-serif font-bold text-white mb-3">My Sankalpa</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm sm:text-base mb-7">
+                        Set profound spiritual goals. Define your Sankalpa with target malas over a dedicated number of
+                        days and watch your devotion grow.
+                    </p>
+
+                    <!-- Mini Goal Card -->
+                    <div
+                        class="bg-surface/70 p-4 rounded-2xl border border-surface-300 flex items-center justify-between gap-4 group-hover:border-gold-500/20 transition-colors">
+                        <div class="flex items-center gap-3.5">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-gold-500/10 flex items-center justify-center border border-gold-500/15">
+                                <img src="assets/images/active_streak.webp" alt="" class="w-7 h-7" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white mb-0.5">21-Day Challenge</div>
+                                <div class="text-xs font-medium text-gold-400">11 Malas / Day</div>
+                            </div>
+                        </div>
+                        <span
+                            class="flex-shrink-0 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/20 text-gold-400 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(245,166,35,0.15)]">Active</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 — Divine Store -->
+                <div id="store" class="feature-card glass rounded-3xl p-7 sm:p-9 relative overflow-hidden group reveal">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/[0.03] rounded-bl-full transition-transform duration-700 group-hover:scale-125"
+                        aria-hidden="true"></div>
+
+                    <div
+                        class="feature-icon-wrap w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-7 border border-gold-500/15 transition-all duration-300">
+                        <img src="assets/images/radha_coin.webp" alt="" class="w-9 h-9 icon-glow" aria-hidden="true" />
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-serif font-bold text-white mb-3">Divine Store</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm sm:text-base mb-5">
+                        Earn blessed <span class="text-gold-400 font-semibold">'Radha Coins'</span> through daily
+                        chanting. Unlock sacred wallpapers, enchanting ringtones, and exclusive spiritual themes.
+                    </p>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="px-3 py-1.5 bg-surface-100 border border-surface-300 rounded-lg text-xs font-semibold text-gray-300 hover:border-gold-500/30 hover:text-gold-400 transition-colors cursor-default">
+                            <i data-lucide="image" class="w-3 h-3 inline mr-1 opacity-50"></i>Wallpapers
+                        </span>
+                        <span
+                            class="px-3 py-1.5 bg-surface-100 border border-surface-300 rounded-lg text-xs font-semibold text-gray-300 hover:border-gold-500/30 hover:text-gold-400 transition-colors cursor-default">
+                            <i data-lucide="music" class="w-3 h-3 inline mr-1 opacity-50"></i>Ringtones
+                        </span>
+                        <span
+                            class="px-3 py-1.5 bg-surface-100 border border-surface-300 rounded-lg text-xs font-semibold text-gray-300 hover:border-gold-500/30 hover:text-gold-400 transition-colors cursor-default">
+                            <i data-lucide="palette" class="w-3 h-3 inline mr-1 opacity-50"></i>Themes
+                        </span>
+                    </div>
+
+                    <!-- Coin indicator -->
+                    <div class="flex items-center gap-2 mt-5 pt-4 border-t border-surface-300">
+                        <img src="assets/images/radha_coin.webp" alt="Radha Coin" class="w-5 h-5" />
+                        <span class="text-sm font-bold text-gold-400">1,200</span>
+                        <span class="text-xs text-gray-500">coins earned</span>
+                    </div>
+                </div>
+
+                <!-- Card 4 — Global Community -->
+                <div id="leaderboard"
+                    class="feature-card glass rounded-3xl p-7 sm:p-9 relative overflow-hidden group reveal">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-gold-500/[0.03] rounded-bl-full transition-transform duration-700 group-hover:scale-125"
+                        aria-hidden="true"></div>
+
+                    <div
+                        class="feature-icon-wrap w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-7 border border-gold-500/15 transition-all duration-300">
+                        <i data-lucide="trophy" class="w-8 h-8 text-gold-400 icon-glow"></i>
+                    </div>
+
+                    <h3 class="text-xl sm:text-2xl font-serif font-bold text-white mb-3">Global Community</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm sm:text-base mb-7">
+                        Engage in friendly spiritual devotion. Ascend the Global and Friends leaderboards and inspire
+                        others with your dedication.
+                    </p>
+
+                    <!-- Leaderboard Snippet -->
+                    <div class="bg-surface/70 rounded-2xl border border-surface-300 overflow-hidden">
+                        <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-300">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Top
+                                Devotees</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gold-500">Global</span>
+                        </div>
+                        <!-- Row 1 -->
+                        <div
+                            class="flex items-center gap-3 px-4 py-2.5 border-b border-surface-200/50 hover:bg-surface-100/50 transition-colors">
+                            <span
+                                class="w-6 h-6 rounded-full bg-gold-500 text-surface text-[10px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(245,166,35,0.4)]">1</span>
+                            <div
+                                class="w-7 h-7 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-[10px] font-bold text-surface">
+                                R</div>
+                            <span class="text-sm font-medium text-white flex-1">Radha Priya</span>
+                            <span class="text-xs font-bold text-gold-400">2,340 <span
+                                    class="text-gray-600 font-normal">malas</span></span>
+                        </div>
+                        <!-- Row 2 -->
+                        <div
+                            class="flex items-center gap-3 px-4 py-2.5 border-b border-surface-200/50 hover:bg-surface-100/50 transition-colors">
+                            <span
+                                class="w-6 h-6 rounded-full bg-gray-500 text-white text-[10px] font-bold flex items-center justify-center">2</span>
+                            <div
+                                class="w-7 h-7 rounded-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center text-[10px] font-bold text-surface">
+                                K</div>
+                            <span class="text-sm font-medium text-white flex-1">Krishna Das</span>
+                            <span class="text-xs font-bold text-gray-400">1,890 <span
+                                    class="text-gray-600 font-normal">malas</span></span>
+                        </div>
+                        <!-- Row 3 -->
+                        <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-100/50 transition-colors">
+                            <span
+                                class="w-6 h-6 rounded-full bg-amber-700 text-white text-[10px] font-bold flex items-center justify-center">3</span>
+                            <div
+                                class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-[10px] font-bold text-white">
+                                G</div>
+                            <span class="text-sm font-medium text-white flex-1">Govind Sharma</span>
+                            <span class="text-xs font-bold text-gray-400">1,650 <span
+                                    class="text-gray-600 font-normal">malas</span></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+       CALL-TO-ACTION BANNER
+  ═══════════════════════════════════════════ -->
+    <section class="py-20 md:py-28 relative overflow-hidden">
+        <!-- Ambient center glow -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+            <div class="w-[600px] h-[300px] bg-gold-500/10 blur-[120px] rounded-full"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-5 sm:px-8 relative z-10 text-center reveal">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold mb-6">
+                Begin Your <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-600 text-glow">Sacred
+                    Journey</span>
+            </h2>
+            <p class="text-gray-400 text-base sm:text-lg mb-10 max-w-xl mx-auto font-light">
+                Download Radha Naam Jaap today and transform your spiritual practice with a beautiful, thoughtful
+                companion.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://play.google.com/store/apps/details?id=com.epiclabcreation.radhanaamjaap"
+                    target="_blank" rel="noopener noreferrer"
+                    class="flex items-center gap-2.5 px-8 py-4 rounded-full bg-gradient-to-r from-gold-500 to-gold-600 text-surface font-bold text-base shadow-[0_0_30px_rgba(245,166,35,0.3)] hover:shadow-[0_0_50px_rgba(245,166,35,0.5)] hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    Download Free
+                </a>
+                <a href="#features"
+                    class="flex items-center gap-2 px-8 py-4 rounded-full border border-surface-300 text-gray-300 hover:text-gold-400 hover:border-gold-500/40 font-medium text-base transition-all duration-300 cursor-pointer">
+                    <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    Explore Features
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+    <footer class="relative border-t border-gold-500/10 pt-14 pb-8 bg-surface">
+        <div
+            class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold-500/30 to-transparent">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+            <div
+                class="flex flex-col md:flex-row justify-between items-center md:items-start gap-10 pb-10 border-b border-surface-200">
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start text-center md:text-left max-w-sm gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="assets/icon/aap_icon.webp" alt="App Icon"
+                            class="w-11 h-11 rounded-xl shadow-[0_0_15px_rgba(245,166,35,0.2)]" />
+                        <span
+                            class="font-serif text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold-300 to-gold-500">Radha
+                            Naam Jaap</span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">Your digital companion for spiritual growth, mantra
+                        tracking, and community devotion.</p>
+                </div>
+
+                <!-- Links -->
+                <div class="flex flex-col items-center md:items-end gap-5">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Connect</p>
+                    <div class="flex gap-3">
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-surface-100 border border-surface-300 flex items-center justify-center text-gray-500 hover:text-gold-400 hover:border-gold-500/30 hover:shadow-[0_0_15px_rgba(245,166,35,0.15)] transition-all cursor-pointer"
+                            aria-label="Twitter">
+                            <i data-lucide="twitter" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-full bg-surface-100 border border-surface-300 flex items-center justify-center text-gray-500 hover:text-gold-400 hover:border-gold-500/30 hover:shadow-[0_0_15px_rgba(245,166,35,0.15)] transition-all cursor-pointer"
+                            aria-label="Instagram">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                        <a href="mailto:Anindya721@gmail.com"
+                            class="w-10 h-10 rounded-full bg-surface-100 border border-surface-300 flex items-center justify-center text-gray-500 hover:text-gold-400 hover:border-gold-500/30 hover:shadow-[0_0_15px_rgba(245,166,35,0.15)] transition-all cursor-pointer"
+                            aria-label="Email">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                    <a href="mailto:Anindya721@gmail.com"
+                        class="text-sm text-gray-500 hover:text-gold-400 transition-colors">Anindya721@gmail.com</a>
+                </div>
+            </div>
+
+            <!-- Bottom bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 text-xs text-gray-600">
+                <p>&copy; 2026 Radha Naam Jaap. All rights reserved.</p>
+                <div class="flex items-center gap-6 font-medium">
+                    <a href="privacy-policy.html" class="hover:text-gold-400 transition-colors cursor-pointer">Privacy
+                        Policy</a>
+                    <span class="text-surface-300">|</span>
+                    <a href="terms-of-service.html" class="hover:text-gold-400 transition-colors cursor-pointer">Terms
+                        of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════ -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const menuIcon = document.getElementById('menuIcon');
+        let isMenuOpen = false;
+        menuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            mobileNav.classList.toggle('open', isMenuOpen);
+            menuBtn.setAttribute('aria-expanded', isMenuOpen);
+            menuIcon.setAttribute('data-lucide', isMenuOpen ? 'x' : 'menu');
+            lucide.createIcons(); // refresh icon
+        });
+        // Close mobile menu on link click
+        mobileNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                isMenuOpen = false;
+                mobileNav.classList.remove('open');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                menuIcon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // Sticky Navbar Shadow
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 30) {
+                nav.style.borderBottomColor = 'rgba(245,166,35,0.15)';
+                nav.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4)';
+            } else {
+                nav.style.borderBottomColor = 'rgba(245,166,35,0.08)';
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Scroll Reveal (Intersection Observer)
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+        );
+        reveals.forEach((el) => observer.observe(el));
+    </script>
+
+</body>
+
+</html>
